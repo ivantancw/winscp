@@ -2860,7 +2860,11 @@ bool __fastcall TCustomScpExplorerForm::ExecuteCopyMoveFileOperation(
 
           CopyParam.IncludeFileMask.SetRoots(FileList, Param.TargetDirectory);
 
-          Terminal->CopyToRemote(FileList, Param.TargetDirectory, &CopyParam, Params, NULL);
+          TParallelOperation ParallelOperation(osLocal);
+          TParallelOperation *ParallelPtr =
+            CopyParam.QueueParallel ? &ParallelOperation : NULL;
+          Terminal->CopyToRemote(
+            FileList, Param.TargetDirectory, &CopyParam, Params, ParallelPtr);
           if (Operation == foMove)
           {
             ReloadLocalDirectory();
